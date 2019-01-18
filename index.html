@@ -1,0 +1,139 @@
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="./style.css" />
+    <style type="text/css">
+        iframe {
+            /* border: none; */
+        }
+        /* First iFrame */
+        .iframes.enabled > iframe {
+            width: 70%;
+        }
+        /* Second iFrame */
+        .iframes.enabled > iframe ~ iframe {
+            width: 30%;
+        }
+    </style>
+    <script type="text/javascript">
+        function toggleContent() {
+            var content = document.getElementById("content");
+            if (content.classList.length == 1) {
+                document.getElementById("appPage").src = "https://demo-bimaster.us10.sapanalytics.cloud/sap/fpa/ui/tenants/7e65c/app.html#;mode=present;view_id=appBuilding;appId=B6FFB2D853704240F3244B02C99F1C5A";
+                content.setAttribute("class", "content enabled")
+            } else {
+                content.setAttribute("class", "content");
+            }
+        }
+
+        function toggleExternalPage() {
+            var content = document.getElementById("iframes");
+            content.classList.length == 1
+                ? content.setAttribute("class", "iframes enabled")
+                : content.setAttribute("class", "iframes");
+        }
+
+        function convert(data) { // some comment from Jens
+            const map = {
+                "[Customers].[Hierarchy].&[USCU_L01]":{maps:"", wikipedia:"https://en.wikipedia.org/wiki/Bicycle"},
+                "[Customers].[Hierarchy].&[USCU_L02]":{maps:"", wikipedia:"https://en.wikipedia.org/wiki/Bicycle"},
+                "[Customers].[Hierarchy].&[USCU_L03]":{maps:"", wikipedia:"https://en.wikipedia.org/wiki/Bicycle"},
+                "[Customers].[Hierarchy].&[USCU_L04]":{maps:"Palo Alto Bicycles", wikipedia:"https://www.paloaltobicycles.com/"},
+                "[Customers].[Hierarchy].&[USCU_L05]":{maps:"", wikipedia:"https://en.wikipedia.org/wiki/Bicycle"},
+                "[Customers].[Hierarchy].&[USCU_L06]":{maps:"Menlo Velo Bicycles", wikipedia:"https://www.menlovelobicycles.com/"},
+                "[Customers].[Hierarchy].&[USCU_L07]":{maps:"", wikipedia:"https://en.wikipedia.org/wiki/Bicycle"},
+                "[Customers].[Hierarchy].&[USCU_L08]":{maps:"Cardinal Bicycle Shop", wikipedia:"https://www.cardinalbikes.com/"},
+                "[Customers].[Hierarchy].&[USCU_L09]":{maps:"", wikipedia:"https://en.wikipedia.org/wiki/Bicycle"},
+                "[Customers].[Hierarchy].&[USCU_L10]":{maps:"", wikipedia:"https://en.wikipedia.org/wiki/Bicycle"},
+            };
+            return map[data[1]][data[0]];
+        }
+
+        function setSystem() {
+            var dd = document.getElementById("dropdown");
+            if (dd.selectedIndex == 0) {
+                document.getElementById("appPage").src = "https://demo-bimaster.us10.sapanalytics.cloud/sap/fpa/ui/tenants/7e65c/app.html#;mode=present;view_id=appBuilding;appId=B6FFB2D853704240F3244B02C99F1C5A";
+                document.getElementById("logon").href = "https://demo-bimaster.us10.sapanalytics.cloud";
+            } else {
+                document.getElementById("appPage").src = "https://demo-bimaster.us10.sapanalytics.cloud/sap/fpa/ui/tenants/7e65c/app.html#;mode=present;view_id=appBuilding;appId=B6FFB2D853704240F3244B02C99F1C5A";
+                document.getElementById("logon").href = "https://demo-bimaster.us10.sapanalytics.cloud";
+            }
+        }
+
+        document.addEventListener("readystatechange", () => {
+            if (document.readyState == "complete") {
+                document.getElementById("analytics").addEventListener("click", toggleContent);
+                document.getElementById("dealer").addEventListener("click", toggleExternalPage);
+
+                window.addEventListener("message", function(event) {
+                    if (typeof event.data === 'string') {
+                        const data = event.data.split("/");
+                        const iframe = document.getElementById('externalPage');
+                        if (data[0] === "maps") {
+                            iframe.src = `https://www.google.com/maps/embed/v1/place?key=AIzaSyA18j_6H5JapRtV7RuuO0wFp1BLZf4YZII&q=california+${convert(data)}`;
+                        } else if (data[0] === "wikipedia") {
+                            iframe.src = `${convert(data)}`;
+                        }
+                        if (iframe.parentElement.getAttribute("class") !== "iframes enabled") {
+                            toggleExternalPage();
+                        }
+                    }
+                }, false);
+            }
+        });
+    </script>
+</head>
+
+<body>
+    <div class="header">
+        <img src="bicycle.svg" style="height: 30px; margin-top: 15px;" />
+        <select id="dropdown" onchange="setSystem()">
+            <option>Demo System</option>
+            <option>Backup System</option>
+        </select>
+        <span>Products</span>
+        <span>Company</span>
+        <span>Order online</span>
+        <span>Jobs</span>
+        <span>Community</span>
+        <span>Materials</span>
+        <span>Dealer</span>
+        <span>About</span>
+        <a id="logon" href="https://demo-bimaster.us10.sapanalytics.cloud" style="color:black; cursor: help;" target="blank"><span>?????</span></a>
+        <img src="menu.png" style="height: 28px; margin-top: 13px;"/>
+    </div>
+    <div id="content" class="content">
+        <div id="welcome" class="welcome">
+            <div class="logo"><span>eBIKE</span><img src="bicycle.svg" style="width: 200px; align-self: center;" /></div>
+            <h1>Powering the driving experience, together</h1>
+            <h4>eBIKE. THE ORIGINAL. As the only eBIKE specialist in Germany,
+                we offer you an unique driving pleasure with gentle support.
+                At eBIKE the whole team is concentrating exclusively and with
+                whole passion for the development, design, production and service
+                of Premium Electric Bikes.</h4>
+        </div>
+        <div id="iframes" class="iframes">
+            <iframe id="appPage" width="100%"></iframe>
+
+            <iframe id="externalPage" width="100%"></iframe>
+        </div>
+    </div>
+    <div class="navigation">
+        <figure onclick="toggleAppPage()"><img src="281100.svg" />
+            <figcaption>Design</figcaption>
+        </figure>
+        <figure id="analytics"><img src="281475.svg" />
+            <figcaption>Analytics</figcaption>
+        </figure>
+        <figure><img src="281437.svg" />
+            <figcaption>Quality</figcaption>
+        </figure>
+        <figure><img src="283528.svg" />
+            <figcaption>Products</figcaption>
+        </figure>
+        <figure id="dealer"><img src="281418.svg" />
+            <figcaption>Find EBIKE Dealer</figcaption>
+        </figure>
+    </div>
+</body>
+
+</html>
